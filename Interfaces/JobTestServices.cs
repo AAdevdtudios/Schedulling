@@ -6,7 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Twilio;
+using Twilio.AspNet.Common;
+using Twilio.AspNet.Core;
 using Twilio.Rest.Api.V2010.Account;
+using Twilio.TwiML;
 
 namespace Schedulling.Interfaces
 {
@@ -26,34 +29,25 @@ namespace Schedulling.Interfaces
         {
             throw new NotImplementedException();
         }
-
+       /* public TwiMLResult Index(SmsRequest incomming)
+        {
+            var messageResponse = new MessagingResponse();
+            messageResponse.Message("This is a test"+incomming.From);
+            return TwiML(messageResponse);
+        }*/
         public void ReccuringJob(int id)
         {
             TwilioClient.Init("AC6dc45e4e803ed9318e363c0d175191d4", "7e0335e7cd6a428484bb37791beab4c1");
             var item = contexts.Schedules.Include(i => i.Phones).Where(i => i.Id == id).FirstOrDefault();
             item.Date = DateTime.Now;
 
-            ICollection<Phones> phones = item.Phones;
             foreach (var phone in item.Phones)
             {
                 MessageResource.Create(
-                    from: "whatsapp:+17622404373",
-                    to: new Twilio.Types.PhoneNumber("whatsapp:" + phone.Phone),
+                    from: new Twilio.Types.PhoneNumber("+17622404373"),
+                    to: new Twilio.Types.PhoneNumber(phone.Phone),
                     body: ""+ item.Message);
             }
-
-            /*for (int i = 0; i < item.Phones.Count; i++)
-            {
-                var phone = contexts.Phones.Where(i => i.Schedules == item).FirstOrDefault();
-                *//*MessageResource.Create(
-                    from: "",
-                    to: new Twilio.Types.PhoneNumber("whatsapp:" + phone.Phone[i]),
-                    body: "");*//*
-                string value = phone.Phone[i]+"";
-                Console.WriteLine(value);
-            }*/
-
-
             contexts.Schedules.Update(item);
             contexts.SaveChanges();
         }
