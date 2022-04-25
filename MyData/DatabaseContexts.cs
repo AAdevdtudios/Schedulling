@@ -16,5 +16,6 @@ namespace Schedulling.MyData
         public DbSet<Schedules> Schedules { get; set; }
         public DbSet<Completed> Completed { get; set; }
         public DbSet<Phones> Phones { get; set; }
+        public DbSet<Schedulling.Modal.Database_Modal.Members> Members { get; set; }
     }
 }

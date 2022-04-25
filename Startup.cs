@@ -33,8 +33,12 @@ namespace Schedulling
         {
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
             services.AddHangfireServer();
+            //Transit
             services.AddTransient<IJobTestService, JobTestServices>();
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddTransient<IMaillingService, MaillingService>();
 
+            //Add mvc
             services.AddMvc(option => option.EnableEndpointRouting = false)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
@@ -49,7 +53,7 @@ namespace Schedulling
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IRecurringJobManager recurringJobManager, DatabaseContexts context, IMaillingService mailService)
         {
             if (env.IsDevelopment())
             {
@@ -65,6 +69,7 @@ namespace Schedulling
             app.UseAuthorization();
             app.UseHangfireDashboard("/dashboard");
 
+            recurringJobManager.AddOrUpdate("stable", () => new JobTestServices(context,mailService).ReccuringJob(), Cron.Daily);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

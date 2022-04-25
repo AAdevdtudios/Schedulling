@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Schedulling.MyData;
 
 namespace Schedulling.Migrations
 {
     [DbContext(typeof(DatabaseContexts))]
-    partial class DatabaseContextsModelSnapshot : ModelSnapshot
+    [Migration("20220425095033_members")]
+    partial class members
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,16 +55,10 @@ namespace Schedulling.Migrations
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DOA")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("DOB")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MaritalStatus")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")

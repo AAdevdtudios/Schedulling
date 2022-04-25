@@ -106,7 +106,7 @@ namespace Schedulling.Controllers
                     _context.Schedules.Update(value);
                     _context.SaveChanges();
                 }
-                _recurringJobManager.AddOrUpdate(schedules.Id + "", () => new JobTestServices(_context).ReccuringJob(schedules.Id), Cron.Yearly(request.Month,request.Day,request.Hour,request.minutes));
+                //_recurringJobManager.AddOrUpdate(schedules.Id + "", () => new JobTestServices(_context).ReccuringJob(schedules.Id), Cron.Yearly(request.Month,request.Day,request.Hour,request.minutes));
                 return Ok();
             }
             catch (Exception ex)
@@ -139,7 +139,7 @@ namespace Schedulling.Controllers
                     _context.Schedules.Update(value);
                     _context.SaveChanges();
                 }
-                _recurringJobManager.AddOrUpdate(schedules.Id + "", () => new JobTestServices(_context).ReccuringJob(schedules.Id), Cron.Monthly(request.Day,request.Hour,request.minutes));
+                //_recurringJobManager.AddOrUpdate(schedules.Id + "", () => new JobTestServices(_context).ReccuringJob(schedules.Id), Cron.Monthly(request.Day,request.Hour,request.minutes));
                 return Ok();
             }
             catch (Exception ex)
@@ -172,7 +172,7 @@ namespace Schedulling.Controllers
                     _context.Schedules.Update(value);
                     _context.SaveChanges();
                 }
-                _recurringJobManager.AddOrUpdate(schedules.Id+"",() => new JobTestServices(_context).ReccuringJob(schedules.Id), Cron.Daily(request.Hour,request.minutes));
+                //_recurringJobManager.AddOrUpdate(schedules.Id+"",() => new JobTestServices(_context).ReccuringJob(schedules.Id), Cron.Daily(request.Hour,request.minutes));
                 return Ok();
             }
             catch (Exception ex)
@@ -210,8 +210,8 @@ namespace Schedulling.Controllers
                     _context.Schedules.Update(value);
                     _context.SaveChanges();
                 }
-                var job = BackgroundJob.Schedule(() => new JobTestServices(_context).ReccuringJob(schedules.Id), span);
-                return Ok(job);
+                //var job = BackgroundJob.Schedule(() => new JobTestServices(_context).ReccuringJob(schedules.Id), span);
+                return Ok("Done");
             }
             catch (Exception ex)
             {

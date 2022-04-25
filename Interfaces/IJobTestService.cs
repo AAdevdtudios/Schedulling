@@ -9,7 +9,7 @@ namespace Schedulling.Interfaces
     public interface IJobTestService
     {
         void FireAndForgetJob();
-        void ReccuringJob(int id);
+        void ReccuringJob();
         void DelayedJob();
     }
 }
