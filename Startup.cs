@@ -8,9 +8,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Schedulling.Interfaces;
+using Schedulling.Modal;
 using Schedulling.MyData;
 using System;
 using System.Collections.Generic;
@@ -36,6 +38,7 @@ namespace Schedulling
             //Transit
             services.AddTransient<IJobTestService, JobTestServices>();
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.Configure<TwilloConfigModal>(Configuration.GetSection("Twillo"));
             services.AddTransient<IMaillingService, MaillingService>();
 
             //Add mvc
@@ -53,7 +56,7 @@ namespace Schedulling
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IRecurringJobManager recurringJobManager, DatabaseContexts context, IMaillingService mailService)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IRecurringJobManager recurringJobManager, DatabaseContexts context, IMaillingService mailService, IOptions<TwilloConfigModal> twilloConfig)
         {
             if (env.IsDevelopment())
             {
@@ -69,7 +72,7 @@ namespace Schedulling
             app.UseAuthorization();
             app.UseHangfireDashboard("/dashboard");
 
-            recurringJobManager.AddOrUpdate("stable", () => new JobTestServices(context,mailService).ReccuringJob(), Cron.Daily);
+            recurringJobManager.AddOrUpdate("stable", () => new JobTestServices(context,mailService, twilloConfig).ReccuringJob(), Cron.Daily);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

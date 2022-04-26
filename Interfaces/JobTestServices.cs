@@ -1,9 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Schedulling.Modal;
 using Schedulling.Modal.Database_Modal;
 using Schedulling.MyData;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Twilio;
@@ -18,10 +21,12 @@ namespace Schedulling.Interfaces
     {
         DatabaseContexts contexts;
         IMaillingService _mailService;
-        public JobTestServices(DatabaseContexts ctx, IMaillingService maillingService)
+        TwilloConfigModal twilloConfig;
+        public JobTestServices(DatabaseContexts ctx, IMaillingService maillingService, IOptions<TwilloConfigModal> twilloconfigs)
         {
             contexts = ctx;
             _mailService = maillingService;
+            twilloConfig = twilloconfigs.Value;
         }
         public void DelayedJob()
         {
@@ -40,27 +45,12 @@ namespace Schedulling.Interfaces
         }*/
         public void ReccuringJob()
         {
-            TwilioClient.Init("AC6dc45e4e803ed9318e363c0d175191d4", "7e0335e7cd6a428484bb37791beab4c1");
-            /*var item = contexts.Schedules.Include(i => i.Phones).Where(i => i.Id == id).FirstOrDefault();
-            item.Date = DateTime.Now;
-
-            foreach (var phone in item.Phones)
-            {
-                MessageResource.Create(
-                    from: new Twilio.Types.PhoneNumber("+17622404373"),
-                    to: new Twilio.Types.PhoneNumber(phone.Phone),
-                    body: ""+ item.Message);
-            }
-            contexts.Schedules.Update(item);
-            contexts.SaveChanges();*/
-
+            TwilioClient.Init(twilloConfig.username, twilloConfig.password);
             List<Members> item = contexts.Members.ToList();
             for (int i = 0; i < item.Count; i++)
             {
                 DateTime dob = Convert.ToDateTime(item[i].DOB);
                 DateTime doa = Convert.ToDateTime(item[i].DOA);
-                //DateTime today = DateTime.ParseExact(item[i].DOB, "MM/dd/yy", CultureInfo.InvariantCulture);
-                //int result = DateTime.Compare(DateTime.Today, dateTime);
                 var updateThis = contexts.Members.Where(option => option.Email == item[i].Email || option.PhoneNo == item[i].PhoneNo).FirstOrDefault();
                 if (DateTime.Today.DayOfYear == dob.DayOfYear)
                 {
@@ -68,15 +58,15 @@ namespace Schedulling.Interfaces
                     {
                         string phone = item[i].PhoneNo.Remove(0, 1);
                         MessageResource.Create(
-                        from: new Twilio.Types.PhoneNumber("+17622404373"),
+                        from: new Twilio.Types.PhoneNumber(twilloConfig.phone),
                         to: new Twilio.Types.PhoneNumber("+234" + phone),
-                        body: "This is a reminder Message for DOA");
+                        body: "This is a Birth day message");
                     }
                     if (updateThis.Email != null)
                     {
-                        string mailbody = $"<h2> Sjx Logistics Limited </h2>" +
-                         $"<p><h3>Dear{item[i].Name}</h3></p>" +
-                         $"<p><h3>Below are your account details.</h3></p> ";
+                        string filePath = Path.GetFullPath("Controllers/HtmlCode/birthday.html");
+                        StreamReader sr = new StreamReader(filePath);
+                        string mailbody= sr.ReadToEnd().Replace("{{name}}", updateThis.Name);
                         _mailService.SendMail(mailbody, updateThis.Email);
                     }
                 }
@@ -93,9 +83,9 @@ namespace Schedulling.Interfaces
                     }
                     if(updateThis.Email != null)
                     {
-                        string mailbody = $"<h2> Sjx Logistics Limited </h2>" +
-                         $"<p><h3>Dear{item[i].Name}</h3></p>" +
-                         $"<p><h3>Below are your account details.</h3></p> ";
+                        string filePath = Path.GetFullPath("Controllers/HtmlCode/birthday.html");
+                        StreamReader sr = new StreamReader(filePath);
+                        string mailbody = sr.ReadToEnd().Replace("{{name}}", updateThis.Name);
                         _mailService.SendMail(mailbody, updateThis.Email);
                     }
 

@@ -26,4 +26,8 @@
     <PackageReference Include="Twilio.AspNet.Core" Version="5.73.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\HtmlCode\" />
+  </ItemGroup>
+
 </Project>
