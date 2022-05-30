@@ -1,10 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
+using RestSharp;
 using System.Threading.Tasks;
 
 namespace Schedulling.Interfaces
@@ -17,28 +12,21 @@ namespace Schedulling.Interfaces
             _mailSettings = mailSettings.Value;
         }
 
-        public void SendMail(string body, string email)
+        public async Task<RestResponse> SendMail(string body, string email)
         {
+            var client = new RestClient("https://llconference.com/mailtest/");
+            var request = new RestRequest();
 
-            MailMessage message = new MailMessage(_mailSettings.Mail, email);
-            message.Subject = $"Welcome to {_mailSettings.DisplayName}";
-            message.IsBodyHtml = true;
+            request.AddQueryParameter("toMail", email);
+            request.AddQueryParameter("subject", "From LLC code");
+            request.AddQueryParameter("body", body);
+            request.Method = Method.Get;
 
-            message.Body = body;
-            message.BodyEncoding = Encoding.UTF8;
-            try
-            {
 
-                SmtpClient smtp = new SmtpClient(_mailSettings.Host, _mailSettings.Port);
-                smtp.Credentials = new NetworkCredential(_mailSettings.Mail, _mailSettings.Password);
-                smtp.EnableSsl = false;
-                smtp.UseDefaultCredentials = false;
-                smtp.Send(message);
-            }
-            catch (Exception e)
-            {
-                throw new NotImplementedException();
-            }
+            request.AddHeader("User-Agent", "Thunder Client (https://www.thunderclient.com)");
+            request.AddHeader("Accept", "*/*");
+            var response = await client.GetAsync(request);
+            return response;
         }
     }
 }

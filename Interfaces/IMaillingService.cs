@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using RestSharp;
 using System.Threading.Tasks;
 
 namespace Schedulling.Interfaces
 {
     public interface IMaillingService
     {
-        void SendMail(string message, string email);
+        Task<RestResponse> SendMail(string message, string email);
     }
 }

@@ -57,10 +57,10 @@ namespace Schedulling.Interfaces
                     if (updateThis.PhoneNo != null)
                     {
                         string phone = item[i].PhoneNo.Remove(0, 1);
-                        MessageResource.Create(
+                        /*MessageResource.Create(
                         from: new Twilio.Types.PhoneNumber(twilloConfig.phone),
                         to: new Twilio.Types.PhoneNumber("+234" + phone),
-                        body: "This is a Birth day message");
+                        body: "This is a Birth day message");*/
                     }
                     if (updateThis.Email != null)
                     {
@@ -76,10 +76,10 @@ namespace Schedulling.Interfaces
                     if(updateThis.PhoneNo != null)
                     {
                         string phone = item[i].PhoneNo.Remove(0,1);
-                        MessageResource.Create(
+                        /*MessageResource.Create(
                         from: new Twilio.Types.PhoneNumber("+17622404373"),
                         to: new Twilio.Types.PhoneNumber("+234"+ phone),
-                        body: "This is a reminder Message for DOA");
+                        body: "This is a reminder Message for DOA");*/
                     }
                     if(updateThis.Email != null)
                     {

@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Schedulling.Interfaces;
+using Schedulling.Modal.Database_Modal;
+using Schedulling.MyData;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Schedulling.Modal.Database_Modal;
-using Schedulling.MyData;
 
 namespace Schedulling.Controllers
 {
@@ -15,16 +14,19 @@ namespace Schedulling.Controllers
     public class MembersController : ControllerBase
     {
         private readonly DatabaseContexts _context;
+        private readonly IMaillingService _mailService;
 
-        public MembersController(DatabaseContexts context)
+        public MembersController(DatabaseContexts context, IMaillingService mailService)
         {
             _context = context;
+            _mailService = mailService;
         }
 
         // GET: api/Members
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Members>>> GetMembers()
         {
+            await _mailService.SendMail("This is a test", "oladelejoseph02@gmail.com");
             return _context.Members;
         }
 
